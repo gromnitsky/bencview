@@ -1,0 +1,5 @@
+=== 0.0.1
+
+Fri, 31 Dec 2010 10:54:08 +0200
+
+- Created a first skeleton.

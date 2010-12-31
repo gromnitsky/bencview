@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+# -*-ruby-*-
+
+require_relative '../lib/bencview/trestle.rb'
+
+include Bencview
+
+$conf = Hash.new
+u = Trestle.new($conf)
+
+$conf[:banner] = "Usage: #{File.basename($0)} [options] hren'"
+$conf[:foobar] = ''
+
+
+# --[ main ]------------------------------------------------------------
+
+u.config_parse(['foobar']) {|src|
+  o = u.cl_parse(src) # create an OptionParser object
+  o.on('--foobar STR', 'An example of the option --foobar') {|i|
+    $conf[:foobar] = i
+  }
+  u.cl_parse(src, o) # run cl parser
+}
+
+# print our env
+if $conf[:verbose] >= 2
+  puts 'Libs dir: ' + Trestle.gem_libdir
+  pp $conf
+end
+
+puts 'Hello, World!'
