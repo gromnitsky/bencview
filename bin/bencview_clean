@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+# -*-ruby-*-
+
+require 'bencode'
+require_relative '../lib/bencview/trestle.rb'
+
+include Bencview
+
+$conf = Hash.new
+u = Trestle.new($conf)
+
+$conf[:banner] = "Usage: #{File.basename($0)} [options] file [file ...]"
+$conf[:a] = 'http://tracker.openbittorrent.com/announce'
+
+
+# --[ main ]------------------------------------------------------------
+
+u.config_parse(['foobar']) {|src|
+  o = u.cl_parse(src) # create an OptionParser object
+  o.on('-a STR', 'An announce tracker URL') {|i|
+    $conf[:a] = i
+  }
+  u.cl_parse(src, o) # run cl parser
+}
+
+# print our env
+if $conf[:verbose] >= 2
+  puts 'Libs dir: ' + Trestle.gem_libdir
+  pp $conf
+end
+
+Trestle.errx(1, $conf[:banner]) if ARGV.size == 0
+
+ec = 0
+ARGV.each {|i|
+  begin
+    t = BEncode.load_file i
+  rescue
+    STDERR.puts "#{File.basename i}: #{$!}"
+    ec += 1
+    next
+  end
+  
+  out = "" if (out = File.dirname(i) + '/') == "./"
+  out = out + File.basename(i, File.extname(i)) + '.CLEANED' + File.extname(i)
+  u.veputs(1, out)
+  begin
+    open(out, 'w+') {|fp| fp.write(BEncode.dump(t)) }
+  rescue
+    STDERR.puts $!.to_s
+    ec += 1
+  end
+}
+exit ec
