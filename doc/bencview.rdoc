@@ -1,6 +1,6 @@
 =Name
 
-bencview--torrent files viewer.
+bencview--torrent file viewer.
 
 
 ==Synopsis
@@ -56,4 +56,4 @@ gemdir`/gems/bencview-x.y.z/etc/</tt> directory for samples.
 
 ==See Also
 
-{bencview_clean}[link:doc/bencview_clean.rdoc]
+{bencview_clean}[link:doc/bencview_clean_rdoc.html]

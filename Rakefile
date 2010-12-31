@@ -11,7 +11,7 @@ require_relative 'test/rake_git'
 spec = Gem::Specification.new {|i|
   i.name = 'bencview'
   i.version = `bin/#{i.name} -V`
-  i.summary = 'Torrent files viewer & metadata cleaner'
+  i.summary = 'Torrent file viewer & metadata cleaner'
   i.author = 'Alexander Gromnitsky'
   i.email = 'alexander.gromnitsky@gmail.com'
   i.homepage = "http://github.com/gromnitsky/#{i.name}"

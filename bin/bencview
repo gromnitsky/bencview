@@ -38,9 +38,7 @@ end
 
 u.config_parse(['foobar']) {|src|
   o = u.cl_parse(src) # create an OptionParser object
-  o.on('-d', 'Dump all as raw hash') {|i|
-    $conf[:dump] = true
-  }
+  o.on('-d', 'Dump all as raw hash') {|i| $conf[:dump] = true }
   u.cl_parse(src, o) # run cl parser
 }
 

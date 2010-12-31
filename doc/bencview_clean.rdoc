@@ -12,13 +12,13 @@ announce tracker.
 ==Description
 
 The bencview_clean utility reads a torrent file and creates a 'cleaner'
-copy of it (with <tt>.CLEANER.torrent</tt> extension) to give you an
+copy of it (with <tt>.CLEANED.torrent</tt> extension) to give you an
 ability to download staff from such idiotic bittorent trackers which
-require 'rating' or other bullshit to participate. (For example,
+require 'rating' or other bullshit to participate. (For example, see
 http://rutracker.org)
 
 If a creator of the torrent file has disabled DHT (because he is a
-moron), you will not able to use the 'cleaner' version of the torrent
+moron), you will not able to use 'cleaner' version of the torrent
 file. Sorry.
 
 The options are as follows:
@@ -32,7 +32,7 @@ The options are as follows:
                             it contains <tt>/</tt> in it, the list from
                             <tt>--config-dirs</tt> is ignored.
 
--V::                        Show bencview_clean version and exit.
+-V::                        Show version and exit.
 
 -v::                        Be more verbose. You can supply it several
                             times, viz. <tt>-vv</tt> dumps even more
@@ -72,4 +72,4 @@ if it read 3 files and 2 of them were invalid, the exit status will be 2
 
 ==See Also
 
-{bencview}[link:doc/bencview.rdoc]
+{bencview}[link:doc/bencview_rdoc.html]
