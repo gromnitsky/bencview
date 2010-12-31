@@ -10,7 +10,7 @@ bencview--torrent files viewer.
 
 ==Description
 
-The bencview utility parses torrent files and prints their metadata to
+The bencview utility reads torrent files and prints their metadata to
 stdout.
 
 The options are as follows:

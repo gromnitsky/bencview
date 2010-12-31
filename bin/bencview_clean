@@ -40,6 +40,10 @@ ARGV.each {|i|
     ec += 1
     next
   end
+
+  t['comment'] = 'Leech without any rating!'
+  t['announce'] = $conf[:a]
+  t['announce-list'] = []
   
   out = "" if (out = File.dirname(i) + '/') == "./"
   out = out + File.basename(i, File.extname(i)) + '.CLEANED' + File.extname(i)

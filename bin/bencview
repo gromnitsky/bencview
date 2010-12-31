@@ -52,12 +52,14 @@ end
 
 Trestle.errx(1, $conf[:banner]) if ARGV.size == 0
 
+ec = 0
 visfilesep = ARGV.size > 1 ? "\n" : "" # visual file separator
 ARGV.each {|i|
   begin
     t = BEncode.load_file i
   rescue
     STDERR.puts "#{File.basename i}: #{$!}"
+    ec += 1
     next
   end
 
@@ -104,3 +106,4 @@ ARGV.each {|i|
     end
   }
 }
+exit ec
