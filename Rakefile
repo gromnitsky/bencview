@@ -11,7 +11,7 @@ require_relative 'test/rake_git'
 spec = Gem::Specification.new {|i|
   i.name = 'bencview'
   i.version = `bin/#{i.name} -V`
-  i.summary = 'TO DO: fill this variable'
+  i.summary = 'Torrent files viewer & metadata cleaner'
   i.author = 'Alexander Gromnitsky'
   i.email = 'alexander.gromnitsky@gmail.com'
   i.homepage = "http://github.com/gromnitsky/#{i.name}"
@@ -28,6 +28,7 @@ spec = Gem::Specification.new {|i|
   i.extra_rdoc_files = FileList['doc/*']
 
   i.add_dependency('open4', '>= 1.0.1')
+  i.add_dependency('bencode', '>= 0.6.0')
 }
 
 Rake::GemPackageTask.new(spec).define

@@ -1,57 +1,8 @@
-=Name
+bencview suite contains several utils to manage .torrent files.
 
-bencview--an util to put a function in yo function so yo can return
-while yo return.
+bencview::             Torrent files viewer.
 
+bencview_clean::       Cleans a list of announce trackers & replaces main
+                       announce tracker (screw you, http://rutracker.org)
 
-==Synopsis
-
- bencview [options]
-
-
-==Description
-
-The bencview utility does something.
-
-The options are as follows:
-
---config-dirs::             List all possible locations for the
-                            configuration file. The first found wins.
-
---config NAME::             The name of the configuration file. If
-                            it contains <tt>/</tt> in it, the list from
-                            <tt>--config-dirs</tt> is ignored.
-
--V::                        Show falsework version and exit.
-
--v::                        Be more verbose. You can supply it several
-                            times, viz. <tt>-vv</tt> dumps even more
-                            debug info.
-
---foobar NAME               Huh?
-
-==Configuration
-
-bencview looks for its configuration at 3 places at start up.
-
-1. At <tt>BENCVIEW_CONF</tt> env variable.
-   (Its format is exactly similar to CL options.)
-
-2. At the configuration file. Its default name is
-   <tt>bencview.yaml</tt> and it can be stored in several
-   system directories which are observable by <tt>--config--dirs</tt> CL
-   option.
-
-3. At command line.
-
-Higher number levels overrides the values from lower number levels.
-
-The configuration file must be in YAML format. Look into <tt>`gem env
-gemdir`/gems/bencview-x.y.z/etc/</tt> directory for samples.
-
-
-==Examples
-
- % ri Bencview
- % bencview --config-dirs
- % bencview -V
+Read about them in corresponding <tt>doc/*.rdoc</tt> files.
