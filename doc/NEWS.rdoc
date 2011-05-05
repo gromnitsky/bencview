@@ -1,3 +1,9 @@
+=== 0.0.2
+
+Fri May  6 00:21:14 EEST 2011
+
+- Minor Rakefile update.
+
 === 0.0.1
 
 Fri, 31 Dec 2010 10:54:08 +0200

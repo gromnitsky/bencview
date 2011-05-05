@@ -6,21 +6,25 @@ require 'rake/clean'
 require 'rake/rdoctask'
 require 'rake/testtask'
 
+require_relative 'lib/bencview/meta'
+include Bencview
+
 require_relative 'test/rake_git'
 
 spec = Gem::Specification.new {|i|
-  i.name = 'bencview'
+  i.name = Meta::NAME
   i.version = `bin/#{i.name} -V`
   i.summary = 'Torrent file viewer & metadata cleaner'
-  i.author = 'Alexander Gromnitsky'
-  i.email = 'alexander.gromnitsky@gmail.com'
-  i.homepage = "http://github.com/gromnitsky/#{i.name}"
+  i.description = i.summary + '.' # eat this, freaking rubygems
+  i.author = Meta::AUTHOR
+  i.email = Meta::EMAIL
+  i.homepage = Meta::HOMEPAGE
+  
   i.platform = Gem::Platform::RUBY
   i.required_ruby_version = '>= 1.9.2'
   i.files = git_ls('.')
 
   i.executables = FileList['bin/*'].gsub(/^bin\//, '')
-  i.default_executable = i.name
   
   i.test_files = FileList['test/test_*.rb']
   
