@@ -4,7 +4,7 @@ require 'digest/md5'
 
 class TestBencview_1272419217 < MiniTest::Unit::TestCase
   CMD = cmd('bencview') # get path to the exe & cd to tests directory
-  
+
   def setup
     # this runs every time before test_*
   end
@@ -36,8 +36,8 @@ class TestBencview_1272419217 < MiniTest::Unit::TestCase
     r = Trestle.cmd_run "#{CMD} torrent/[rutracker.org]314407.torrent torrent/[rutracker.org].t3128973.torrent"
     assert_equal(0, r[0])
     achieved = Digest::MD5.hexdigest(r[2].encode('UTF-8', Encoding.default_external))
-    expected = Digest::MD5.hexdigest(File.read('viewer_output_01.txt').encode('UTF-8', 'KOI8-U'))
+    expected = Digest::MD5.hexdigest(File.read('viewer_output_01.txt'))
     assert_equal(expected, achieved)
   end
-  
+
 end

@@ -1,4 +1,3 @@
-# :erb:
 # Various staff for minitest. Include this file into your 'helper.rb'.
 
 require 'fileutils'
@@ -7,12 +6,7 @@ include FileUtils
 require_relative '../lib/bencview/trestle'
 include Bencview
 
-# don't run tests automatically if they were invoked as 'gem check -t ...'
-if $0 =~ /gem/
-  require 'minitest/unit'
-else
-  require 'minitest/autorun'
-end
+require 'minitest/autorun'
 
 # Return the right directory for (probably executable) _c_.
 def cmd(c)
@@ -33,5 +27,3 @@ def cmd(c)
 
   '../bin/' + c
 end
-
-# Don't remove this: falsework/0.2.2/naive/2010-12-26T04:50:00+02:00
