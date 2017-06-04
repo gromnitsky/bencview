@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+require 'json'
+require 'base64'
+
+require 'bencode'
+
+# walk through object, return a hash suitable for bencoding
+def self.bencode_safe obj
+  if obj.respond_to? :to_hash
+    r = {}
+    obj.to_hash.each do |key, value|
+      r[key] = bencode_safe value  # recursion
+    end
+    r
+  elsif obj.respond_to? :to_ary
+    obj.to_ary.map { |a| bencode_safe(a) } # recursion
+  elsif obj.kind_of? String
+    # check if the string is in base64
+    if obj =~ /^([A-Za-z0-9+\/]{4})*([A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}==)$/
+      return Base64.decode64 obj
+    else
+      obj
+    end
+  else
+    obj
+  end
+end
+
+
+
+io = ARGV.size > 0 ? File.open(ARGV[0]) : $stdin
+print (bencode_safe JSON.parse io.read).bencode
