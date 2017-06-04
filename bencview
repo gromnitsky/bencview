@@ -2,13 +2,16 @@
 
 require 'optparse'
 require 'date'
+require 'digest'
+require 'uri'
 
 require 'bencode'
 
 class Torrent
-  attr_reader :input
+  attr_reader :input, :infohash
   def initialize io
     @input = (BEncode::Parser.new io).parse!
+    @infohash = infohash
   end
 
   def any_to_s obj
@@ -17,6 +20,18 @@ class Torrent
 
   def num n
     n.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+  end
+
+  # BitTorrent specific
+  def infohash
+    return nil unless @input['info'].kind_of?(Hash)
+    Digest::SHA1.hexdigest @input['info'].bencode
+  end
+
+  # BitTorrent specific
+  def magnet name
+    return nil unless @infohash
+    "magnet:?xt=urn:btih:#{@infohash}" + (name ? "&dn=#{URI.escape name}.torrent" : "")
   end
 
   # BitTorrent specific
@@ -29,6 +44,8 @@ class Torrent
       case key
       when /^piece/
         # TODO: calc the chunks
+      when /\.utf-8$/
+        # ignore (rutracker inserts this)
       when 'files'
         bytes = 0
         max = 0
@@ -55,6 +72,11 @@ class Torrent
   def to_s
     r = []
     info = nil
+
+    if @infohash
+      r.push "infohash: #{@infohash}"
+      r.push "uri: #{magnet @input.dig 'info', 'name'}"
+    end
 
     @input.each do |key,val|
       if key == 'info'
