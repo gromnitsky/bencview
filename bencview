@@ -4,6 +4,8 @@ require 'optparse'
 require 'date'
 require 'digest'
 require 'uri'
+require 'json'
+require "base64"
 
 require 'bencode'
 
@@ -44,9 +46,9 @@ class Torrent
     obj.each do |key,val|
       case key
       when /^piece/
-        # TODO: calc the chunks
+      # TODO: calc the chunks
       when /\.utf-8$/
-        # ignore (rutracker inserts this)
+      # ignore (rutracker inserts this)
       when 'files'
         bytes = 0
         max = 0
@@ -92,7 +94,36 @@ class Torrent
     r.concat info if info
     r.join "\n"
   end
+
+  # walk through object, return a hash suitable for JSON.stringify
+  def self.json_safe obj
+    if obj.respond_to? :to_hash
+      r = {}
+      obj.to_hash.each do |key, value|
+        r[key] = json_safe value  # recursion
+      end
+      r
+    elsif obj.respond_to? :to_ary
+      obj.to_ary.map { |a| json_safe(a) } # recursion
+    elsif obj.kind_of? String
+      begin
+        obj.to_json
+      rescue
+        return Base64.encode64 obj
+      end
+
+      obj
+    else
+      obj
+    end
+  end
+
+  def to_json
+    (Torrent.json_safe @input).to_json
+  end
+
 end
+
 
 
 
@@ -116,4 +147,4 @@ if opt[:raw]
   exit
 end
 
-puts torrent
+puts opt[:json] ? torrent.to_json : torrent
