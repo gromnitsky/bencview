@@ -11,6 +11,7 @@ class Torrent
   attr_reader :input, :infohash
   def initialize io
     @input = (BEncode::Parser.new io).parse!
+    raise 'invalid input' unless @input
     @infohash = infohash
   end
 
