@@ -133,7 +133,8 @@ end
 if __FILE__ == $0
   opt = {}
   OptionParser.new do |o|
-    o.banner = "Usage: #{$0} [-jr] [input]"
+    o.banner = "Usage: #{File.basename $0} [-jr] [input]"
+    o.version = (eval File.read File.join __dir__, 'package.gemspec').version
     o.on("-j", "Output as JSON") do
       opt[:json] = true
     end
