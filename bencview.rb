@@ -1,6 +1,3 @@
-#!/usr/bin/env ruby
-
-require 'optparse'
 require 'date'
 require 'digest'
 require 'uri'
@@ -9,24 +6,26 @@ require "base64"
 
 require 'bencode'
 
-# walk through object, firing `block` on each string leaf
-def hash_walk obj, &block
-  if obj.respond_to? :to_hash
-    r = {}
-    obj.to_hash.each do |key, value|
-      r[key] = hash_walk value, &block  # recursion
+module Bencview
+  # walk through object, firing `block` on each string leaf
+  def self.hash_walk obj, &block
+    if obj.respond_to? :to_hash
+      r = {}
+      obj.to_hash.each do |key, value|
+        r[key] = hash_walk value, &block  # recursion
+      end
+      r
+    elsif obj.respond_to? :to_ary
+      obj.to_ary.map { |a| hash_walk a, &block } # recursion
+    elsif obj.kind_of? String
+      yield obj
+    else
+      obj
     end
-    r
-  elsif obj.respond_to? :to_ary
-    obj.to_ary.map { |a| hash_walk a, &block } # recursion
-  elsif obj.kind_of? String
-    yield obj
-  else
-    obj
   end
 end
 
-class Torrent
+class Bencview::Torrent
   attr_reader :input, :infohash
   def initialize io
     @input = (BEncode::Parser.new io).parse!
@@ -116,7 +115,7 @@ class Torrent
 
   # walk through object, return a hash suitable for JSON.stringify
   def to_json
-    hash_walk(@input) do |str|
+    Bencview.hash_walk(@input) do |str|
       begin
         str.to_json
       rescue
@@ -126,34 +125,4 @@ class Torrent
     end.to_json
   end
 
-end
-
-
-
-if __FILE__ == $0
-  opt = {}
-  OptionParser.new do |o|
-    o.banner = "Usage: #{File.basename $0} [-jr] [input]"
-    o.on("-j", "Output as JSON") do
-      opt[:json] = true
-    end
-    o.on("-r", "Print as a Ruby hash (debug)") do
-      opt[:raw] = true
-    end
-    o.on('-v', '-V', 'Print the version number') do
-      puts (eval File.read File.join __dir__, 'package.gemspec').version
-      exit
-    end
-  end.parse!
-
-  io = ARGV.size > 0 ? File.open(ARGV[0]) : $stdin
-  torrent = Torrent.new io
-
-  if opt[:raw]
-    require 'pp'
-    pp torrent.input
-    exit
-  end
-
-  puts opt[:json] ? torrent.to_json : torrent
 end
