@@ -1,0 +1,96 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'date'
+
+require 'bencode'
+
+class Torrent
+  attr_reader :input
+  def initialize io
+    @input = (BEncode::Parser.new io).parse!
+  end
+
+  def any_to_s obj
+    obj.kind_of?(Array) ? [obj.size, obj].join("\n\t") : obj.to_s
+  end
+
+  def num n
+    n.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+  end
+
+  # BitTorrent specific
+  def bti obj
+    return nil unless obj.kind_of?(Hash)
+
+    r = []
+    files = []
+    obj.each do |key,val|
+      case key
+      when /^piece/
+        # TODO: calc the chunks
+      when 'files'
+        bytes = 0
+        max = 0
+        val.each do |file|
+          bytes += file['length']
+          max = file['length'] if max < file['length']
+        end
+        max = (num max).size
+
+        files.push "files: #{val.size}"
+        val.each do |file|
+          files.push "%#{max}s %s" % [num(file['length']), file['path'].join('/')]
+        end
+        files.push "files size: #{num bytes}"
+
+      else
+        r.push "#{key}: #{any_to_s val}"
+      end
+    end
+
+    r.concat files if files
+  end
+
+  def to_s
+    r = []
+    info = nil
+
+    @input.each do |key,val|
+      if key == 'info'
+        info = bti val
+      elsif key =~ /date/
+        r.push "#{key}: #{DateTime.strptime(val.to_s, '%s').rfc2822}"
+      else
+        r.push "#{key}: #{any_to_s val}"
+      end
+    end
+
+    r.concat info if info
+    r.join "\n"
+  end
+end
+
+
+
+opt = {}
+OptionParser.new do |o|
+  o.banner = "Usage: #{$0} [-jr] [input]"
+  o.on("-j", "Output as JSON") do
+    opt[:json] = true
+  end
+  o.on("-r", "Print as a Ruby hash (debug)") do
+    opt[:raw] = true
+  end
+end.parse!
+
+io = ARGV.size > 0 ? File.open(ARGV[0]) : $stdin
+torrent = Torrent.new io
+
+if opt[:raw]
+  require 'pp'
+  pp torrent.input
+  exit
+end
+
+puts torrent
