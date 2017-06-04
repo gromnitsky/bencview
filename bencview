@@ -109,7 +109,7 @@ class Torrent
       begin
         obj.to_json
       rescue
-        return Base64.encode64 obj
+        return Base64.strict_encode64 obj
       end
 
       obj
