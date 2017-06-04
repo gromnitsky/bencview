@@ -9,6 +9,23 @@ require "base64"
 
 require 'bencode'
 
+# walk through object, firing `block` on each string leaf
+def hash_walk obj, &block
+  if obj.respond_to? :to_hash
+    r = {}
+    obj.to_hash.each do |key, value|
+      r[key] = hash_walk value, &block  # recursion
+    end
+    r
+  elsif obj.respond_to? :to_ary
+    obj.to_ary.map { |a| hash_walk a, &block } # recursion
+  elsif obj.kind_of? String
+    yield obj
+  else
+    obj
+  end
+end
+
 class Torrent
   attr_reader :input, :infohash
   def initialize io
@@ -98,55 +115,41 @@ class Torrent
   end
 
   # walk through object, return a hash suitable for JSON.stringify
-  def self.json_safe obj
-    if obj.respond_to? :to_hash
-      r = {}
-      obj.to_hash.each do |key, value|
-        r[key] = json_safe value  # recursion
-      end
-      r
-    elsif obj.respond_to? :to_ary
-      obj.to_ary.map { |a| json_safe(a) } # recursion
-    elsif obj.kind_of? String
-      begin
-        obj.to_json
-      rescue
-        return Base64.strict_encode64 obj
-      end
-
-      obj
-    else
-      obj
-    end
-  end
-
   def to_json
-    (Torrent.json_safe @input).to_json
+    hash_walk(@input) do |str|
+      begin
+        str.to_json
+      rescue
+        next Base64.strict_encode64 str
+      end
+      str
+    end.to_json
   end
 
 end
-
 
 
 
-opt = {}
-OptionParser.new do |o|
-  o.banner = "Usage: #{$0} [-jr] [input]"
-  o.on("-j", "Output as JSON") do
-    opt[:json] = true
-  end
-  o.on("-r", "Print as a Ruby hash (debug)") do
-    opt[:raw] = true
-  end
-end.parse!
+if __FILE__ == $0
+  opt = {}
+  OptionParser.new do |o|
+    o.banner = "Usage: #{$0} [-jr] [input]"
+    o.on("-j", "Output as JSON") do
+      opt[:json] = true
+    end
+    o.on("-r", "Print as a Ruby hash (debug)") do
+      opt[:raw] = true
+    end
+  end.parse!
 
-io = ARGV.size > 0 ? File.open(ARGV[0]) : $stdin
-torrent = Torrent.new io
+  io = ARGV.size > 0 ? File.open(ARGV[0]) : $stdin
+  torrent = Torrent.new io
 
-if opt[:raw]
-  require 'pp'
-  pp torrent.input
-  exit
+  if opt[:raw]
+    require 'pp'
+    pp torrent.input
+    exit
+  end
+
+  puts opt[:json] ? torrent.to_json : torrent
 end
-
-puts opt[:json] ? torrent.to_json : torrent
