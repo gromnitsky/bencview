@@ -31,7 +31,7 @@ class Torrent
   def initialize io
     @input = (BEncode::Parser.new io).parse!
     raise 'invalid input' unless @input
-    @infohash = infohash
+    @infohash = sha1
   end
 
   def any_to_s obj
@@ -43,7 +43,7 @@ class Torrent
   end
 
   # BitTorrent specific
-  def infohash
+  def sha1
     return nil unless @input['info'].kind_of?(Hash)
     Digest::SHA1.hexdigest @input['info'].bencode
   end
