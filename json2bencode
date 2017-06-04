@@ -1,10 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'json'
-require 'base64'
-
-require 'bencode'
-
 require_relative './bencview'
 
 io = ARGV.size > 0 ? File.open(ARGV[0]) : $stdin
