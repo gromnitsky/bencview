@@ -18,7 +18,7 @@ class Torrent
   end
 
   def any_to_s obj
-    obj.kind_of?(Array) ? [obj.size, obj].join("\n\t") : obj.to_s
+    obj.kind_of?(Array) ? [obj.size, obj].join("\n ") : obj.to_s
   end
 
   def num n
@@ -44,6 +44,7 @@ class Torrent
     r = []
     files = []
     obj.each do |key,val|
+      key = key.to_s.strip
       case key
       when /^piece/
       # TODO: calc the chunks
@@ -56,7 +57,7 @@ class Torrent
           bytes += file['length']
           max = file['length'] if max < file['length']
         end
-        max = (num max).size
+        max = (num max).size + 1
 
         files.push "files: #{val.size}"
         val.each do |file|
@@ -82,6 +83,7 @@ class Torrent
     end
 
     @input.each do |key,val|
+      key = key.to_s.strip
       if key == 'info'
         info = bti val
       elsif key =~ /date/
