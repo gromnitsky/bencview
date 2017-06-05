@@ -7,7 +7,13 @@ Gem::Specification.new do |s|
   s.email = 'alexander.gromnitsky@gmail.com'
   s.homepage = 'https://github.com/gromnitsky/bencview'
   s.license = 'MIT'
-  s.files = `git ls-files`.split.delete_if {|val| val =~ /^test/ }
+  s.files = [
+    'bencview',
+    'bencview.rb',
+    'json2bencode',
+    'package.gemspec',
+    'README.md',
+  ]
 
   s.require_paths = ['.']
   s.bindir = '.'
