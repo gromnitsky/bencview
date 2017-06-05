@@ -54,20 +54,24 @@ class Bencview::Torrent
   end
 
   # BitTorrent specific
-  def bti obj
+  def bti obj, prefix
     return nil unless obj.kind_of?(Hash)
+
+    rkey = -> key { "#{prefix}#{key}" }
 
     r = []
     obj.each do |key,val|
       key = key.to_s.strip
-      case key
-      when /^piece/
+      if key =~ /^piece/
         # TODO: calc the chunks
-      when /\.utf-8$/
-      when /^(files|length)$/
-        # ignore, see below
+      elsif key =~ /\.utf-8$/
+        # ignore
+      elsif key =~ /^(files|length)$/
+        # ignore, but see below `files_add`
+      elsif key == 'profiles' && val.kind_of?(Array)
+        val.each {|item| r.concat to_a item, "#{prefix}#{key}/" }
       else
-        r.push "info/#{key}: #{val}"
+        r.push "#{rkey.call key}: #{val}"
       end
     end
 
@@ -81,11 +85,11 @@ class Bencview::Torrent
       end
       max = (num max).size + 1
 
-      files.push "info/files: #{arr.size}"
+      files.push "#{rkey.call 'files'}: #{arr.size}"
       arr.each do |file|
         files.push "%#{max}s %s" % [num(file['length']), file['path'].join('/')]
       end
-      files.push "info/files size: #{num bytes}"
+      files.push "#{rkey.call 'files size'}: #{num bytes}"
     end
 
     if obj['files']
@@ -97,30 +101,40 @@ class Bencview::Torrent
     r.concat files if files
   end
 
-  def to_s
+  def to_a obj=nil, prefix=''
+    obj = @input unless obj
+
     r = []
     info = nil
 
-    if @infohash
+    rkey = -> key { "#{prefix}#{key}" }
+
+    if @infohash && prefix == ''
       r.push "infohash: #{@infohash}"
       r.push "uri: #{magnet @input.dig 'info', 'name'}"
     end
 
-    @input.each do |key,val|
+    obj.each do |key,val|
       key = key.to_s.strip
       if key == 'info'
-        info = bti val
+        info = bti val, "#{prefix}info/"
+      elsif val.kind_of? Hash
+        r.concat to_a val, "#{prefix}#{key}/" # recursion
       elsif key =~ /date/
-        r.push "#{key}: #{DateTime.strptime(val.to_s, '%s').rfc2822}"
+        r.push "#{rkey.call key}: #{DateTime.strptime(val.to_s, '%s').rfc2822}"
       elsif key =~ /-list$/
-        r.push "#{key}: #{any_to_s val}"
+        r.push "#{rkey.call key}: #{any_to_s val}"
       else
-        r.push "#{key}: #{val}"
+        r.push "#{rkey.call key}: #{val}"
       end
     end
 
     r.concat info if info
-    r.join "\n"
+    r
+  end
+
+  def to_s obj=nil, prefix=''
+    (to_a obj, prefix).join "\n"
   end
 
   # walk through object, return a hash suitable for JSON.stringify
