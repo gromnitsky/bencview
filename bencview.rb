@@ -58,32 +58,40 @@ class Bencview::Torrent
     return nil unless obj.kind_of?(Hash)
 
     r = []
-    files = []
     obj.each do |key,val|
       key = key.to_s.strip
       case key
       when /^piece/
-      # TODO: calc the chunks
+        # TODO: calc the chunks
       when /\.utf-8$/
-      # ignore (rutracker inserts this)
-      when 'files'
-        bytes = 0
-        max = 0
-        val.each do |file|
-          bytes += file['length']
-          max = file['length'] if max < file['length']
-        end
-        max = (num max).size + 1
-
-        files.push "files: #{val.size}"
-        val.each do |file|
-          files.push "%#{max}s %s" % [num(file['length']), file['path'].join('/')]
-        end
-        files.push "files size: #{num bytes}"
-
+      when /^(files|name|length)$/
+        # ignore, see below
       else
-        r.push "#{key}: #{val}"
+        r.push "info/#{key}: #{val}"
       end
+    end
+
+    files = []
+    files_add = -> arr do
+      bytes = 0
+      max = 0
+      arr.each do |file|
+        bytes += file['length']
+        max = file['length'] if max < file['length']
+      end
+      max = (num max).size + 1
+
+      files.push "info/files: #{arr.size}"
+      arr.each do |file|
+        files.push "%#{max}s %s" % [num(file['length']), file['path'].join('/')]
+      end
+      files.push "info/files size: #{num bytes}"
+    end
+
+    if obj['files']
+      files_add.call obj['files']
+    elsif obj['length'] && obj['name']
+      files_add.call [{'length' => obj['length'], 'path' => [obj['name']]}]
     end
 
     r.concat files if files
@@ -104,7 +112,7 @@ class Bencview::Torrent
         info = bti val
       elsif key =~ /date/
         r.push "#{key}: #{DateTime.strptime(val.to_s, '%s').rfc2822}"
-      elsif key == 'announce-list'
+      elsif key =~ /-list$/
         r.push "#{key}: #{any_to_s val}"
       else
         r.push "#{key}: #{val}"
