@@ -34,7 +34,7 @@ class Bencview::Torrent
   end
 
   def any_to_s obj
-    obj.kind_of?(Array) ? [obj.size, obj].join("\n ") : obj.to_s
+    obj.kind_of?(Array) ? [obj.size, obj].join("\n ").strip : obj.to_s
   end
 
   def num n
@@ -82,7 +82,7 @@ class Bencview::Torrent
         files.push "files size: #{num bytes}"
 
       else
-        r.push "#{key}: #{any_to_s val}"
+        r.push "#{key}: #{val}"
       end
     end
 
@@ -104,8 +104,10 @@ class Bencview::Torrent
         info = bti val
       elsif key =~ /date/
         r.push "#{key}: #{DateTime.strptime(val.to_s, '%s').rfc2822}"
-      else
+      elsif key == 'announce-list'
         r.push "#{key}: #{any_to_s val}"
+      else
+        r.push "#{key}: #{val}"
       end
     end
 
