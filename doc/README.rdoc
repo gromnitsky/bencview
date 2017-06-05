@@ -1,9 +1,0 @@
-bencview suite contains several utils to manage .torrent files.
-
-bencview::             Torrent file viewer.
-
-bencview_clean::       Cleans a list of announce trackers & replaces
-                       main announce tracker (to be able to cheat,
-                       for example, http://rutracker.org, ha-ha).
-
-Read about them in corresponding <tt>*.rdoc</tt> files.
