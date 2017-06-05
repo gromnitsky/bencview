@@ -64,7 +64,7 @@ class Bencview::Torrent
       when /^piece/
         # TODO: calc the chunks
       when /\.utf-8$/
-      when /^(files|name|length)$/
+      when /^(files|length)$/
         # ignore, see below
       else
         r.push "info/#{key}: #{val}"
