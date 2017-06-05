@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+
+require_relative './bencview'
+
+opt = {}
+OptionParser.new do |o|
+  o.banner = "Usage: #{File.basename $0} [-jr] [input]"
+  o.on("-j", "Output as JSON") do
+    opt[:json] = true
+  end
+  o.on("-r", "Print as a Ruby hash (debug)") do
+    opt[:raw] = true
+  end
+  o.on('-v', '-V', 'Print the version number') do
+    puts (eval File.read File.join __dir__, 'package.gemspec').version
+    exit
+  end
+end.parse!
+
+io = ARGV.size > 0 ? File.open(ARGV[0]) : $stdin
+torrent = Bencview::Torrent.new io
+
+if opt[:raw]
+  require 'pp'
+  pp torrent.input
+  exit
+end
+
+puts opt[:json] ? torrent.to_json : torrent
