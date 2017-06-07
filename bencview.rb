@@ -62,8 +62,11 @@ class Bencview::Torrent
     r = []
     obj.each do |key,val|
       key = key.to_s.strip
-      if key =~ /^piece/
-        # TODO: calc the chunks
+      if key == 'piece length'
+        # ignore
+      elsif key == 'pieces' && obj['piece length']
+        pieces = val.bytesize / 20
+        r.push "#{rkey.call 'pieces'}: #{num pieces} x #{num obj['piece length']}"
       elsif key =~ /\.utf-8$/
         # ignore
       elsif key =~ /^(files|length)$/
