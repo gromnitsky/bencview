@@ -50,7 +50,7 @@ class Bencview::Torrent
   # BitTorrent specific
   def magnet name
     return nil unless @infohash
-    "magnet:?xt=urn:btih:#{@infohash}" + (name ? "&dn=#{URI.escape name}.torrent" : "")
+    "magnet:?xt=urn:btih:#{@infohash}" + (name ? "&dn=#{URI.escape name}" : "")
   end
 
   # BitTorrent specific
