@@ -31,8 +31,8 @@ View a torrent file:
 
 ~~~
 $ bencview gimp.torrent
-infohash: a85b7e7f035c55f684238d0e252b273fe2a1ccf5
-uri: magnet:?xt=urn:btih:a85b7e7f035c55f684238d0e252b273fe2a1ccf5&dn=gimp-2.8.14-setup-1.exe.torrent
+*info-hash: a85b7e7f035c55f684238d0e252b273fe2a1ccf5
+*uri: magnet:?xt=urn:btih:a85b7e7f035c55f684238d0e252b273fe2a1ccf5&dn=gimp-2.8.14-setup-1.exe
 announce: udp://tracker.publicbt.com:80
 announce-list: 2
  udp://tracker.publicbt.com:80
@@ -45,10 +45,13 @@ url-list: 34
  http://gimp.afri.cc/pub/gimp/v2.8/windows
  [...]
 info/name: gimp-2.8.14-setup-1.exe
+info/*pieces: 351 x 262,144
 info/files: 1
  91,931,728 gimp-2.8.14-setup-1.exe
-info/files size: 91,931,728
+info/*files size: 91,931,728
 ~~~
+
+Properties prefixed w/ '*' don't exist in the torrent file.
 
 Remove all trackers from it:
 
@@ -59,8 +62,8 @@ $ file file.torrent
 file.torrent: BitTorrent file
 
 $ bencview file.torrent
-infohash: a85b7e7f035c55f684238d0e252b273fe2a1ccf5
-uri: magnet:?xt=urn:btih:a85b7e7f035c55f684238d0e252b273fe2a1ccf5&dn=gimp-2.8.14-setup-1.exe.torrent
+*info-hash: a85b7e7f035c55f684238d0e252b273fe2a1ccf5
+*uri: magnet:?xt=urn:btih:a85b7e7f035c55f684238d0e252b273fe2a1ccf5&dn=gimp-2.8.14-setup-1.exe
 comment: GIMP 2.8.14 Installer for Microsoft Windows - updated
 created by: mktorrent 1.0
 creation date: Tue, 2 Sep 2014 22:05:50 +0000
@@ -69,9 +72,10 @@ url-list: 34
  http://gimp.afri.cc/pub/gimp/v2.8/windows
  [...]
 info/name: gimp-2.8.14-setup-1.exe
+info/*pieces: 351 x 262,144
 info/files: 1
  91,931,728 gimp-2.8.14-setup-1.exe
-info/files size: 91,931,728
+info/*files size: 91,931,728
 ~~~
 
 Note that the infohash hasn't changed.
