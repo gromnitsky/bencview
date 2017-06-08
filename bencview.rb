@@ -66,7 +66,7 @@ class Bencview::Torrent
         # ignore
       elsif key == 'pieces' && obj['piece length']
         pieces = val.bytesize / 20
-        r.push "#{rkey.call 'pieces'}: #{num pieces} x #{num obj['piece length']}"
+        r.push "#{rkey.call '*pieces'}: #{num pieces} x #{num obj['piece length']}"
       elsif key =~ /\.utf-8$/
         # ignore
       elsif key =~ /^(files|length)$/
@@ -92,7 +92,7 @@ class Bencview::Torrent
       arr.each do |file|
         files.push "%#{max}s %s" % [num(file['length']), file['path'].join('/')]
       end
-      files.push "#{rkey.call 'files size'}: #{num bytes}"
+      files.push "#{rkey.call '*files size'}: #{num bytes}"
     end
 
     if obj['files']
@@ -101,7 +101,7 @@ class Bencview::Torrent
       files_add.call [{'length' => obj['length'], 'path' => [obj['name']]}]
     end
 
-    r.concat files if files
+    r.concat files
   end
 
   def to_a obj=nil, prefix=''
@@ -113,8 +113,8 @@ class Bencview::Torrent
     rkey = -> key { "#{prefix}#{key}" }
 
     if @infohash && prefix == ''
-      r.push "infohash: #{@infohash}"
-      r.push "uri: #{magnet @input.dig 'info', 'name'}"
+      r.push "*info-hash: #{@infohash}"
+      r.push "*uri: #{magnet @input.dig 'info', 'name'}"
     end
 
     obj.each do |key,val|
@@ -132,7 +132,7 @@ class Bencview::Torrent
       end
     end
 
-    r.concat info if info
+    r.concat info if info       # add the info section to the very end
     r
   end
 
