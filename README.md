@@ -45,7 +45,7 @@ url-list: 34
  http://gimp.afri.cc/pub/gimp/v2.8/windows
  [...]
 info/name: gimp-2.8.14-setup-1.exe
-info/*pieces: 351 x 262,144
+info/pieces: 351 x 262,144
 info/files: 1
  91,931,728 gimp-2.8.14-setup-1.exe
 info/*files size: 91,931,728
@@ -72,7 +72,7 @@ url-list: 34
  http://gimp.afri.cc/pub/gimp/v2.8/windows
  [...]
 info/name: gimp-2.8.14-setup-1.exe
-info/*pieces: 351 x 262,144
+info/pieces: 351 x 262,144
 info/files: 1
  91,931,728 gimp-2.8.14-setup-1.exe
 info/*files size: 91,931,728

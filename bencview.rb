@@ -66,7 +66,7 @@ class Bencview::Torrent
         # ignore
       elsif key == 'pieces' && obj['piece length']
         pieces = val.bytesize / 20
-        r.push "#{rkey.call '*pieces'}: #{num pieces} x #{num obj['piece length']}"
+        r.push "#{rkey.call 'pieces'}: #{num pieces} x #{num obj['piece length']}"
       elsif key =~ /\.utf-8$/
         # ignore
       elsif key =~ /^(files|length)$/
