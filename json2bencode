@@ -3,11 +3,11 @@
 require_relative './bencview'
 
 io = ARGV.size > 0 ? File.open(ARGV[0]) : $stdin
-print Bencview.hash_walk(JSON.parse io.read) do |str|
+print (Bencview.hash_walk(JSON.parse io.read) do |str|
   # check if the string is in base64
   if str =~ /^([A-Za-z0-9+\/]{4})*([A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}==)$/
     next Base64.decode64 str
   else
     str
   end
-end.bencode
+end).bencode

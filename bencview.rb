@@ -3,6 +3,7 @@ require 'digest'
 require 'uri'
 require 'json'
 require "base64"
+require 'erb'
 
 require 'bencode'
 
@@ -50,7 +51,7 @@ class Bencview::Torrent
   # BitTorrent specific
   def magnet name
     return nil unless @infohash
-    "magnet:?xt=urn:btih:#{@infohash}" + (name ? "&dn=#{URI.escape name}" : "")
+    "magnet:?xt=urn:btih:#{@infohash}" + (name ? "&dn=#{ERB::Util.url_encode name}" : "")
   end
 
   # BitTorrent specific
